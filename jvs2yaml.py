@@ -1,3 +1,43 @@
+# SETUP
+#  - pip install lxml rtyaml beautifulsoup4
+#
+# USAGE
+#  $ python -u extract.py
+#  This downloads the jbovlaste export page, uses that list to
+#  download the XML export in every language, and then extracts
+#  the gismu into formatted YAML files.
+#  To get around the captcha, first log into jbovlaste in your
+#  web browser. Then, get the cookie for jbovlaste.lojban.org and
+#  put it in a file called `jvs_cookie.secret`. (It should look
+#  something like `jbovlastessionid=ADSFASFADSF`.)
+
+# <config>
+
+# base for the export list page, and the export links
+JVS = 'http://jbovlaste.lojban.org/export/'
+
+# the page with the list of exports
+XML_URL = 'xml.html'
+
+# see above: you need to put your jvs session cookie here
+# a separate file is used so that this one can be committed
+JVS_COOKIE = open('jvs_cookie.secret', 'r').read().strip()
+
+# pattern for saving the jbovlaste exports
+# %s will be filled with the language code (en, es, jbo)
+XML_FILE = 'xml/%s-xml-export.html'
+
+# folder where the gismu YAML files will be stored
+EXPORT_PATH = 'gismu'
+
+# the gismu YAML files will have definitions, notes and gloss
+# words in all available languages. the languages in this list
+# will be pulled to the top of the file (if present). the rest
+# will be sorted alphabetically
+FAVORED_LANGUAGES = ['en', 'jbo', 'de', 'es', 'fr', 'ru']
+
+# </config>
+
 import os, codecs, re, urllib2
 import rtyaml as yaml
 from lxml import etree
@@ -5,12 +45,6 @@ from collections import OrderedDict
 from bs4 import BeautifulSoup
 from pprint import pprint
 
-JVS = 'http://jbovlaste.lojban.org/export/'
-XML_URL = 'xml.html'
-JVS_COOKIE = open('jvs_cookie.secret', 'r').read().strip()
-XML_FILE = 'xml/%s-xml-export.html'
-EXPORT_PATH = 'gismu'
-FAVORED_LANGUAGES = ['en', 'jbo', 'de', 'es', 'fr', 'ru']
 
 langs = {}
 
